@@ -5,17 +5,18 @@ presubmits:
     branches:
     - ^release-4\.19$
     - ^release-4\.19-
-    cluster: build09
+    cluster: build06
     context: ci/prow/aws-e2e-operator
     decorate: true
     decoration_config:
       oauth_token_secret:
         key: oauth
         name: github-credentials-openshift-ci-robot-private-git-cloner
+      timeout: 5h0m0s
     hidden: true
     labels:
       ci-operator.openshift.io/cloud: aws
-      ci-operator.openshift.io/cloud-cluster-profile: aws
+      ci-operator.openshift.io/cloud-cluster-profile: aws-3
       ci.openshift.io/generator: prowgen
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-priv-windows-machine-config-operator-release-4.19-aws-e2e-operator
@@ -95,6 +96,7 @@ presubmits:
       oauth_token_secret:
         key: oauth
         name: github-credentials-openshift-ci-robot-private-git-cloner
+      timeout: 5h0m0s
     hidden: true
     labels:
       ci-operator.openshift.io/cloud: azure4
@@ -382,13 +384,14 @@ presubmits:
     branches:
     - ^release-4\.19$
     - ^release-4\.19-
-    cluster: build02
+    cluster: build11
     context: ci/prow/gcp-e2e-operator
     decorate: true
     decoration_config:
       oauth_token_secret:
         key: oauth
         name: github-credentials-openshift-ci-robot-private-git-cloner
+      timeout: 5h0m0s
     hidden: true
     labels:
       ci-operator.openshift.io/cloud: gcp
@@ -685,6 +688,7 @@ presubmits:
       oauth_token_secret:
         key: oauth
         name: github-credentials-openshift-ci-robot-private-git-cloner
+      timeout: 5h0m0s
     hidden: true
     labels:
       ci-operator.openshift.io/cloud: vsphere
@@ -903,6 +907,7 @@ presubmits:
       oauth_token_secret:
         key: oauth
         name: github-credentials-openshift-ci-robot-private-git-cloner
+      timeout: 5h0m0s
     hidden: true
     labels:
       ci-operator.openshift.io/cloud: vsphere
@@ -986,6 +991,7 @@ presubmits:
       oauth_token_secret:
         key: oauth
         name: github-credentials-openshift-ci-robot-private-git-cloner
+      timeout: 5h0m0s
     hidden: true
     labels:
       ci-operator.openshift.io/cloud: vsphere
@@ -1069,6 +1075,7 @@ presubmits:
       oauth_token_secret:
         key: oauth
         name: github-credentials-openshift-ci-robot-private-git-cloner
+      timeout: 5h0m0s
     hidden: true
     labels:
       ci-operator.openshift.io/cloud: vsphere

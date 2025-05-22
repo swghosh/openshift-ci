@@ -290,6 +290,8 @@ images:
         source_path: /go/bin/clusterimageset-updater
       - destination_dir: .
         source_path: /go/bin/promoted-image-governor
+      - destination_dir: .
+        source_path: /go/bin/rebalancer
   to: auto-config-brancher
 - additional_architectures:
   - arm64
@@ -541,7 +543,7 @@ images:
   to: serviceaccount-secret-rotation-trigger
 - dockerfile_literal: |-
     FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
-    RUN microdnf install -y git diffutils && microdnf clean all && rm -rf /var/cache/dnf
+    RUN microdnf install -y git diffutils make which npm go && microdnf clean all && rm -rf /var/cache/dnf
     ADD sippy-config-generator /usr/bin/sippy-config-generator
     ADD prcreator /usr/bin/prcreator
     ENTRYPOINT ["/usr/bin/sippy-config-generator"]
@@ -764,7 +766,9 @@ images:
       - destination_dir: .
         source_path: /go/bin/ci-scheduling-webhook
   to: ci-scheduling-webhook
-- context_dir: images/gpu-scheduling-webhook
+- additional_architectures:
+  - arm64
+  context_dir: images/gpu-scheduling-webhook
   from: os
   inputs:
     bin:
@@ -784,12 +788,6 @@ promotion:
   to:
   - namespace: ci
     tag: latest
-releases:
-  latest:
-    integration:
-      include_built_images: true
-      name: "4.19"
-      namespace: ocp
 resources:
   '*':
     requests:
@@ -866,7 +864,7 @@ tests:
         name: ci-operator
         namespace: test-credentials
       - mount_path: /tmp/pull-secret
-        name: registry-pull-credentials
+        name: ci-pull-credentials
         namespace: test-credentials
       - mount_path: /etc/push-secret
         name: registry-push-credentials-ci-central
@@ -921,6 +919,7 @@ tests:
   node_architecture: arm64
   optional: true
   steps:
+    node_architecture: arm64
     test:
     - as: breaking-changes
       commands: |
@@ -955,63 +954,6 @@ tests:
   commands: make lint
   container:
     from: golangci-lint
-- as: canary-build09
-  cluster: build09
-  interval: 10m
-  steps:
-    test:
-    - as: test
-      commands: echo "here i am"
-      from: os
-      resources:
-        requests:
-          cpu: 100m
-          memory: 200Mi
-- as: konflux-test-cluster-claim
-  cluster_claim:
-    architecture: amd64
-    cloud: aws
-    owner: openshift-ci
-    product: ocp
-    timeout: 1h0m0s
-    version: "4.17"
-  cron: 0 0 1 1 0
-  steps:
-    test:
-    - as: konflux-test
-      commands: make-placeholder
-      from: konflux-image-placeholder
-      resources:
-        requests:
-          cpu: 100m
-          memory: 200Mi
-    workflow: generic-claim
-- as: konflux-test-aws
-  cron: 0 0 1 1 0
-  steps:
-    cluster_profile: aws
-    test:
-    - as: konflux-test
-      cli: latest
-      commands: make-placeholder
-      from: konflux-image-placeholder
-      resources:
-        requests:
-          cpu: 100m
-    workflow: ipi-aws
-- as: konflux-test-gcp
-  cron: 0 0 1 1 0
-  steps:
-    cluster_profile: gcp
-    test:
-    - as: konflux-test
-      cli: latest
-      commands: make-placeholder
-      from: konflux-image-placeholder
-      resources:
-        requests:
-          cpu: 100m
-    workflow: ipi-gcp
 - as: security
   optional: true
   steps:
